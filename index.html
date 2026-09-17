@@ -1,0 +1,944 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Microsite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #b8d4e3 0%, #a8c8b8 15%, #c5d5a8 25%, #d4dcc0 35%, #e8e0b8 45%, #e8d8c0 55%, #d4c8c0 65%, #c8b8c8 75%, #b8c0d4 85%, #a8b8d8 100%);
+            font-family: 'Playfair Display', Georgia, serif;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px 80px;
+        }
+
+        .microsite {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px 20px;
+            z-index: 100;
+            gap: 10px;
+        }
+
+        .top-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .top-btn:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.15);
+            border-color: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.25);
+        }
+
+        .user-badge {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px 8px 8px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 30px;
+        }
+
+        .user-badge.show { display: flex; }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b8d4e3, #a8c8b8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        /* Profile */
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .profile-photo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, #d4b896, #c4a882);
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-photo .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .username {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .bio {
+            font-size: 14px;
+            font-style: italic;
+            color: #4a5568;
+            text-align: center;
+            max-width: 280px;
+        }
+
+        /* Welcome */
+        .welcome-msg {
+            display: none;
+            width: 100%;
+            padding: 12px 20px;
+            background: rgba(45, 138, 78, 0.1);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #2d8a4e;
+            font-weight: 500;
+        }
+
+        .welcome-msg.show { display: block; }
+
+        /* Links */
+        .links-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .link-card {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            animation: fadeInUp 0.6s ease-out backwards;
+            position: relative;
+            overflow: visible;
+        }
+
+        .link-card:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .link-title {
+            font-size: 15px;
+            font-weight: 600;
+            font-style: italic;
+            color: #374151;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Dots Button */
+        .dots-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .dots-btn:hover {
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        .dots-icon {
+            display: flex;
+            gap: 3px;
+        }
+
+        .dots-icon span {
+            width: 4px;
+            height: 4px;
+            background: #4a5568;
+            border-radius: 50%;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            display: none;
+            position: absolute;
+            right: 8px;
+            top: calc(100% + 8px);
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+            z-index: 9999;
+            min-width: 140px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .context-menu.show {
+            display: block;
+            animation: fadeInUp 0.15s ease-out;
+        }
+
+        .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .context-menu-item:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .context-menu-item:last-child {
+            border-radius: 0 0 12px 12px;
+        }
+
+        .ctx-edit {
+            color: #374151;
+        }
+
+        .ctx-edit:hover {
+            background: rgba(93, 78, 55, 0.1);
+        }
+
+        .ctx-delete {
+            color: #dc3545;
+        }
+
+        .ctx-delete:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        /* Add Link Button */
+        .add-link-section {
+            width: 100%;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .add-link-section.show { display: block; }
+
+        .add-link-btn {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-link-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 380px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #4a5568;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.15);
+            transform: rotate(90deg);
+        }
+
+        /* Form */
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input {
+            padding: 14px 18px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: #2d3748;
+            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #b8d4e3;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 4px rgba(184, 212, 227, 0.2);
+        }
+
+        .form-input::placeholder { color: #a0aec0; }
+
+        .submit-btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #5d4e37, #8b7355);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 78, 55, 0.3);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .form-link {
+            color: #5d4e37;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .form-link:hover { text-decoration: underline; }
+
+        .error-msg {
+            display: none;
+            padding: 10px 14px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 8px;
+            color: #dc3545;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .error-msg.show { display: block; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2d3748;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            body { padding-top: 70px; }
+            .top-bar { padding: 10px 16px; }
+            .profile-photo { width: 95px; height: 95px; }
+            .username { font-size: 20px; }
+            .link-card { padding: 16px 16px; }
+            .link-title { font-size: 14px; }
+            .modal { padding: 24px; width: 95%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button class="top-btn" id="loginBtn" onclick="openLoginModal()">Login</button>
+        <div class="user-badge" id="userBadge">
+            <div class="user-avatar" id="userAvatar">F</div>
+            <span class="user-name" id="userName">Filbert</span>
+            <button class="top-btn logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="microsite">
+        <div class="welcome-msg" id="welcomeMsg">
+            Welcome back, <span id="welcomeName">Filbert</span>! 🎉
+        </div>
+
+        <div class="profile-section">
+            <div class="profile-photo">
+                <img src="profile.jpg" alt="Profile" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <div class="placeholder" style="display:none">👤</div>
+            </div>
+            <div class="username">@seangarrette</div>
+            <div class="bio">NYC based Esthetician + Skincare Expert</div>
+        </div>
+
+        <div class="links-section" id="linksSection"></div>
+
+        <div class="add-link-section" id="addLinkSection">
+            <button class="add-link-btn" onclick="openAddLinkModal()">+ Tambah Link Baru</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOverlay(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // === DATA ===
+        var DEFAULT_USERS = {
+            'Filbert': { password: 'Rusdi123', name: 'Filbert' }
+        };
+
+        var DEFAULT_LINKS = [
+            { id: 1, name: 'Product Recommendations', icon: '✨', url: '' },
+            { id: 2, name: 'WWD | Dior Beauty Announcement', icon: '📰', url: '' },
+            { id: 3, name: 'Favorite Sunscreens', icon: '☀️', url: '' },
+            { id: 4, name: 'HyperSkin 20% off Discount Link', icon: '🎁', url: '' }
+        ];
+
+        // === STORAGE HELPERS ===
+        function getUsers() {
+            try { return JSON.parse(localStorage.getItem('ms_users')) || DEFAULT_USERS; }
+            catch(e) { return DEFAULT_USERS; }
+        }
+
+        function saveUsers(u) { localStorage.setItem('ms_users', JSON.stringify(u)); }
+
+        function getLinks() {
+            try { return JSON.parse(localStorage.getItem('ms_links')) || DEFAULT_LINKS; }
+            catch(e) { return DEFAULT_LINKS; }
+        }
+
+        function saveLinks(l) { localStorage.setItem('ms_links', JSON.stringify(l)); }
+
+        function isLoggedIn() { return localStorage.getItem('ms_logged') === '1'; }
+
+        function getCurrentUser() {
+            try { return JSON.parse(localStorage.getItem('ms_user')); }
+            catch(e) { return null; }
+        }
+
+        // === AUTH ===
+        function doLogin(user, pass) {
+            var users = getUsers();
+            if (users[user] && users[user].password === pass) {
+                localStorage.setItem('ms_logged', '1');
+                localStorage.setItem('ms_user', JSON.stringify({ username: user, name: users[user].name }));
+                return true;
+            }
+            return false;
+        }
+
+        function doRegister(user, pass, name) {
+            var users = getUsers();
+            if (users[user]) return false;
+            users[user] = { password: pass, name: name };
+            saveUsers(users);
+            return true;
+        }
+
+        function logout() {
+            localStorage.removeItem('ms_logged');
+            localStorage.removeItem('ms_user');
+            updateUI();
+            showToast('Berhasil logout!');
+        }
+
+        // === UI ===
+        function updateUI() {
+            var loginBtn = document.getElementById('loginBtn');
+            var badge = document.getElementById('userBadge');
+            var welcome = document.getElementById('welcomeMsg');
+            var addSection = document.getElementById('addLinkSection');
+
+            if (isLoggedIn()) {
+                var user = getCurrentUser();
+                loginBtn.style.display = 'none';
+                badge.classList.add('show');
+                welcome.classList.add('show');
+                addSection.classList.add('show');
+                document.getElementById('welcomeName').textContent = user.name;
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                document.getElementById('userName').textContent = user.name;
+            } else {
+                loginBtn.style.display = '';
+                badge.classList.remove('show');
+                welcome.classList.remove('show');
+                addSection.classList.remove('show');
+            }
+        }
+
+        // === RENDER LINKS ===
+        function renderLinks() {
+            var links = getLinks();
+            var section = document.getElementById('linksSection');
+            section.innerHTML = '';
+
+            links.forEach(function(link, i) {
+                var card = document.createElement('div');
+                card.className = 'link-card';
+                card.style.animationDelay = (i * 0.08) + 's';
+
+                // Title
+                var title = document.createElement('span');
+                title.className = 'link-title';
+                title.textContent = link.icon + ' ' + link.name;
+
+                // Dots button
+                var dotsBtn = document.createElement('button');
+                dotsBtn.className = 'dots-btn';
+                dotsBtn.innerHTML = '<div class="dots-icon"><span></span><span></span><span></span></div>';
+                dotsBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    toggleContextMenu(link.id);
+                };
+
+                // Context menu
+                var ctx = document.createElement('div');
+                ctx.className = 'context-menu';
+                ctx.id = 'ctx-' + link.id;
+
+                var editBtn = document.createElement('button');
+                editBtn.className = 'context-menu-item ctx-edit';
+                editBtn.textContent = '✏️ Edit';
+                editBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    closeAllMenus();
+                    openEditLinkModal(link.id);
+                };
+
+                var delBtn = document.createElement('button');
+                delBtn.className = 'context-menu-item ctx-delete';
+                delBtn.textContent = '🗑️ Hapus';
+                delBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    closeAllMenus();
+                    deleteLink(link.id);
+                };
+
+                ctx.appendChild(editBtn);
+                ctx.appendChild(delBtn);
+
+                card.appendChild(title);
+                card.appendChild(dotsBtn);
+                card.appendChild(ctx);
+
+                card.onclick = function() {
+                    if (link.url) {
+                        window.open(link.url, '_blank');
+                    } else {
+                        showToast('Link ini belum memiliki URL');
+                    }
+                };
+
+                section.appendChild(card);
+            });
+        }
+
+        function toggleContextMenu(id) {
+            var menu = document.getElementById('ctx-' + id);
+            var isOpen = menu.classList.contains('show');
+            closeAllMenus();
+            if (!isOpen) menu.classList.add('show');
+        }
+
+        function closeAllMenus() {
+            document.querySelectorAll('.context-menu').forEach(function(m) {
+                m.classList.remove('show');
+            });
+        }
+
+        // Close menus on outside click
+        document.addEventListener('click', function() { closeAllMenus(); });
+
+        // === LINK CRUD ===
+        function addLink(name, icon, url) {
+            var links = getLinks();
+            var newId = 1;
+            links.forEach(function(l) { if (l.id >= newId) newId = l.id + 1; });
+            links.push({ id: newId, name: name, icon: icon, url: url });
+            saveLinks(links);
+            renderLinks();
+            showToast('Link berhasil ditambahkan! ✨');
+        }
+
+        function updateLink(id, name, icon, url) {
+            var links = getLinks();
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].id === id) {
+                    links[i].name = name;
+                    links[i].icon = icon;
+                    links[i].url = url;
+                    break;
+                }
+            }
+            saveLinks(links);
+            renderLinks();
+            showToast('Link berhasil diupdate! ✨');
+        }
+
+        function deleteLink(id) {
+            if (!confirm('Yakin ingin menghapus link ini?')) return;
+            var links = getLinks().filter(function(l) { return l.id !== id; });
+            saveLinks(links);
+            renderLinks();
+            showToast('Link berhasil dihapus! 🗑️');
+        }
+
+        // === MODAL ===
+        function openModal(title, bodyHTML) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = bodyHTML;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeModalOverlay(e) {
+            if (e.target === e.currentTarget) closeModal();
+        }
+
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // === LOGIN MODAL ===
+        function openLoginModal() {
+            var html = '<div class="form">' +
+                '<div class="error-msg" id="loginErr"></div>' +
+                '<div class="form-group"><label class="form-label">Username</label>' +
+                '<input type="text" class="form-input" id="loginUser" placeholder="Masukkan username"></div>' +
+                '<div class="form-group"><label class="form-label">Password</label>' +
+                '<input type="password" class="form-input" id="loginPass" placeholder="Masukkan password"></div>' +
+                '<button class="submit-btn" onclick="handleLogin()">Login</button>' +
+                '<div class="form-footer">Belum punya akun? <span class="form-link" onclick="openRegisterModal()">Daftar disini</span></div>' +
+                '</div>';
+            openModal('Login', html);
+        }
+
+        function handleLogin() {
+            var user = document.getElementById('loginUser').value.trim();
+            var pass = document.getElementById('loginPass').value.trim();
+            var err = document.getElementById('loginErr');
+            if (!user || !pass) { err.textContent = 'Harap isi semua field!'; err.classList.add('show'); return; }
+            if (doLogin(user, pass)) {
+                closeModal();
+                updateUI();
+                showToast('Selamat datang, ' + getCurrentUser().name + '! 👋');
+            } else {
+                err.textContent = 'Username atau password salah!'; err.classList.add('show');
+            }
+        }
+
+        // === REGISTER MODAL ===
+        function openRegisterModal() {
+            var html = '<div class="form">' +
+                '<div class="error-msg" id="regErr"></div>' +
+                '<div class="form-group"><label class="form-label">Nama</label>' +
+                '<input type="text" class="form-input" id="regName" placeholder="Masukkan nama"></div>' +
+                '<div class="form-group"><label class="form-label">Username</label>' +
+                '<input type="text" class="form-input" id="regUser" placeholder="Buat username"></div>' +
+                '<div class="form-group"><label class="form-label">Password</label>' +
+                '<input type="password" class="form-input" id="regPass" placeholder="Buat password (min 6 karakter)"></div>' +
+                '<button class="submit-btn" onclick="handleRegister()">Daftar</button>' +
+                '<div class="form-footer">Sudah punya akun? <span class="form-link" onclick="openLoginModal()">Login disini</span></div>' +
+                '</div>';
+            openModal('Daftar', html);
+        }
+
+        function handleRegister() {
+            var name = document.getElementById('regName').value.trim();
+            var user = document.getElementById('regUser').value.trim();
+            var pass = document.getElementById('regPass').value.trim();
+            var err = document.getElementById('regErr');
+            if (!name || !user || !pass) { err.textContent = 'Harap isi semua field!'; err.classList.add('show'); return; }
+            if (pass.length < 6) { err.textContent = 'Password minimal 6 karakter!'; err.classList.add('show'); return; }
+            if (doRegister(user, pass, name)) {
+                closeModal();
+                showToast('Registrasi berhasil! Silakan login. 🎉');
+                setTimeout(openLoginModal, 400);
+            } else {
+                err.textContent = 'Username sudah digunakan!'; err.classList.add('show');
+            }
+        }
+
+        // === ADD LINK MODAL ===
+        function openAddLinkModal() {
+            var html = '<div class="form">' +
+                '<div class="error-msg" id="addErr"></div>' +
+                '<div class="form-group"><label class="form-label">Nama Link</label>' +
+                '<input type="text" class="form-input" id="addName" placeholder="Contoh: My Portfolio"></div>' +
+                '<div class="form-group"><label class="form-label">URL Link</label>' +
+                '<input type="url" class="form-input" id="addUrl" placeholder="https://example.com"></div>' +
+                '<div class="form-group"><label class="form-label">Icon (emoji)</label>' +
+                '<input type="text" class="form-input" id="addIcon" value="🔗" placeholder="🔗"></div>' +
+                '<button class="submit-btn" onclick="handleAddLink()">Tambah Link</button>' +
+                '</div>';
+            openModal('Tambah Link', html);
+        }
+
+        function handleAddLink() {
+            var name = document.getElementById('addName').value.trim();
+            var url = document.getElementById('addUrl').value.trim();
+            var icon = document.getElementById('addIcon').value.trim();
+            var err = document.getElementById('addErr');
+            if (!name) { err.textContent = 'Harap isi nama link!'; err.classList.add('show'); return; }
+            if (!icon) { err.textContent = 'Harap isi icon!'; err.classList.add('show'); return; }
+            addLink(name, icon, url);
+            closeModal();
+        }
+
+        // === EDIT LINK MODAL ===
+        function openEditLinkModal(id) {
+            var links = getLinks();
+            var link = null;
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].id === id) { link = links[i]; break; }
+            }
+            if (!link) return;
+
+            var html = '<div class="form">' +
+                '<div class="error-msg" id="editErr"></div>' +
+                '<div class="form-group"><label class="form-label">Nama Link</label>' +
+                '<input type="text" class="form-input" id="editName" value="' + escapeAttr(link.name) + '"></div>' +
+                '<div class="form-group"><label class="form-label">URL Link</label>' +
+                '<input type="url" class="form-input" id="editUrl" value="' + escapeAttr(link.url || '') + '" placeholder="https://example.com"></div>' +
+                '<div class="form-group"><label class="form-label">Icon (emoji)</label>' +
+                '<input type="text" class="form-input" id="editIcon" value="' + escapeAttr(link.icon) + '"></div>' +
+                '<button class="submit-btn" onclick="handleEditLink(' + id + ')">Simpan Perubahan</button>' +
+                '</div>';
+            openModal('Edit Link', html);
+        }
+
+        function handleEditLink(id) {
+            var name = document.getElementById('editName').value.trim();
+            var url = document.getElementById('editUrl').value.trim();
+            var icon = document.getElementById('editIcon').value.trim();
+            var err = document.getElementById('editErr');
+            if (!name) { err.textContent = 'Harap isi nama link!'; err.classList.add('show'); return; }
+            if (!icon) { err.textContent = 'Harap isi icon!'; err.classList.add('show'); return; }
+            updateLink(id, name, icon, url);
+            closeModal();
+        }
+
+        // === UTILS ===
+        function escapeAttr(str) {
+            return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        // === INIT ===
+        updateUI();
+        renderLinks();
+    </script>
+</body>
+</html>
